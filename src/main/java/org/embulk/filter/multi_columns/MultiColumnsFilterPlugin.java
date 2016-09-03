@@ -1,6 +1,7 @@
 package org.embulk.filter.multi_columns;
 
 import org.embulk.config.Config;
+import org.embulk.config.ConfigDefault;
 import org.embulk.config.ConfigSource;
 import org.embulk.config.Task;
 import org.embulk.config.TaskSource;
@@ -22,6 +23,7 @@ public class MultiColumnsFilterPlugin
             extends Task
     {
         @Config("separator")
+        @ConfigDefault("\"\\\\s+\"")
         public String getSeparator();
 
         @Config("columns")
@@ -31,6 +33,7 @@ public class MultiColumnsFilterPlugin
         String getSrc();
 
         @Config("remain")
+        @ConfigDefault("false")
         Boolean getRemain();
     }
 

@@ -23,8 +23,8 @@ filters:
     rules:
       - src: name
 #        separator: ' '
-        separator: '\s+'
-        remain: false
+#        separator: '\s+'
+#        remain: true
         columns:
           - { name: first, type: string }
           - { name: last,  type: string }
