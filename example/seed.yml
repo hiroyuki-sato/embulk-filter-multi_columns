@@ -1,0 +1,5 @@
+in:
+  type: file
+  path_prefix: "/Users/hsato/OpenProjects/embulk/embulk-filter-multi_columns/example/csv/sample_"
+out:
+  type: stdout
