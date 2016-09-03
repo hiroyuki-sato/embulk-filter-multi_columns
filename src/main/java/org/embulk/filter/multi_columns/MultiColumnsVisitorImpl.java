@@ -98,7 +98,7 @@ public class MultiColumnsVisitorImpl
         if (inputSource != null) {
             String[] row = separateMap.get(inputSource.getSrc());
             Integer offset = inputSource.getOffset();
-            if (row.length < offset) {
+            if (row.length < offset + 1) {
                 pageBuilder.setNull(outputColumn);
             }
             else {
