@@ -17,7 +17,7 @@ public class MultiColumnsVisitorImpl
 {
     private MultiColumnsFilterPlugin.PluginTask task;
     private Schema inputSchema;
-    private Schema outputSchema;
+//    private Schema outputSchema;
     private PageReader pageReader;
     private PageBuilder pageBuilder;
     private MultiColumnsConfiguration multiColumnsConfig;
@@ -28,7 +28,7 @@ public class MultiColumnsVisitorImpl
             PageReader pageReader, PageBuilder pageBuilder, MultiColumnsConfiguration multiColumnsConfig)
     {
         this.inputSchema = inputSchema;
-        this.outputSchema = outputSchema;
+//        this.outputSchema = outputSchema;
         this.pageReader = pageReader;
         this.pageBuilder = pageBuilder;
         this.multiColumnsConfig = multiColumnsConfig;
