@@ -6,6 +6,8 @@ import org.embulk.spi.Exec;
 import org.embulk.spi.PageBuilder;
 import org.embulk.spi.PageReader;
 import org.embulk.spi.Schema;
+import org.msgpack.value.Value;
+import org.msgpack.value.ValueFactory;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
@@ -55,39 +57,86 @@ public class MultiColumnsVisitorImpl
         }
     }
 
+    private String getSplitedString(MultiColumnsInputSource inputSource){
+        String[] row = separateMap.get(inputSource.getSrc());
+        Integer offset = inputSource.getOffset();
+        if (row.length < offset + 1) {
+            return null;
+        }
+        else {
+            return row[offset];
+        }
+    }
+
     @Override
     public void booleanColumn(Column outputColumn)
     {
-        Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
-        if (pageReader.isNull(inputColumn)) {
-            pageBuilder.setNull(outputColumn);
-        }
-        else {
-            pageBuilder.setBoolean(outputColumn, pageReader.getBoolean(inputColumn));
+        MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
+        if (inputSource != null) {
+            String str = getSplitedString(inputSource);
+            if ( str == null) {
+                pageBuilder.setNull(outputColumn);
+            }
+            else {
+                Boolean v = ColumnCaster.asBoolean(ValueFactory.newString(str));
+                pageBuilder.setBoolean(outputColumn, v);
+            }
+        } else {
+            Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
+            if (pageReader.isNull(inputColumn)) {
+                pageBuilder.setNull(outputColumn);
+            }
+            else {
+                pageBuilder.setBoolean(outputColumn, pageReader.getBoolean(inputColumn));
+            }
         }
     }
 
     @Override
     public void longColumn(Column outputColumn)
     {
-        Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
-        if (pageReader.isNull(inputColumn)) {
-            pageBuilder.setNull(outputColumn);
-        }
-        else {
-            pageBuilder.setLong(outputColumn, pageReader.getLong(inputColumn));
+        MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
+        if (inputSource != null) {
+            String str = getSplitedString(inputSource);
+            if ( str == null) {
+                pageBuilder.setNull(outputColumn);
+            }
+            else {
+                Long v = ColumnCaster.asLong(ValueFactory.newString(str));
+                pageBuilder.setLong(outputColumn, v);
+            }
+        } else {
+            Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
+            if (pageReader.isNull(inputColumn)) {
+                pageBuilder.setNull(outputColumn);
+            }
+            else {
+                pageBuilder.setLong(outputColumn, pageReader.getLong(inputColumn));
+            }
         }
     }
 
     @Override
     public void doubleColumn(Column outputColumn)
     {
-        Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
-        if (pageReader.isNull(inputColumn)) {
-            pageBuilder.setNull(outputColumn);
-        }
-        else {
-            pageBuilder.setDouble(outputColumn, pageReader.getDouble(inputColumn));
+        MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
+        if (inputSource != null) {
+            String str = getSplitedString(inputSource);
+            if ( str == null) {
+                pageBuilder.setNull(outputColumn);
+            }
+            else {
+                Double v = ColumnCaster.asDouble(ValueFactory.newString(str));
+                pageBuilder.setDouble(outputColumn, v);
+            }
+        } else {
+            Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
+            if (pageReader.isNull(inputColumn)) {
+                pageBuilder.setNull(outputColumn);
+            }
+            else {
+                pageBuilder.setDouble(outputColumn, pageReader.getDouble(inputColumn));
+            }
         }
     }
 
@@ -96,14 +145,12 @@ public class MultiColumnsVisitorImpl
     {
         MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
         if (inputSource != null) {
-            String[] row = separateMap.get(inputSource.getSrc());
-            Integer offset = inputSource.getOffset();
-            if (row.length < offset + 1) {
+            String str = getSplitedString(inputSource);
+            if ( str == null) {
                 pageBuilder.setNull(outputColumn);
             }
             else {
-                String v = row[offset];
-                pageBuilder.setString(outputColumn, v);
+                pageBuilder.setString(outputColumn, str);
             }
         }
         else {
@@ -139,5 +186,27 @@ public class MultiColumnsVisitorImpl
         else {
             pageBuilder.setTimestamp(outputColumn, pageReader.getTimestamp(inputColumn));
         }
+
+/*
+        MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
+        if (inputSource != null) {
+            String v = getSplitedString(inputSource);
+            if (v == null) {
+                pageBuilder.setNull(outputColumn);
+            }
+            else {
+                pageBuilder.setString(outputColumn, v);
+            }
+        } else {
+            Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
+            if (pageReader.isNull(inputColumn)) {
+                pageBuilder.setNull(outputColumn);
+            }
+            else {
+                pageBuilder.setTimestamp(outputColumn, pageReader.getTimestamp(inputColumn));
+            }
+        }
+*/
     }
+
 }

@@ -16,7 +16,8 @@ in:
     - {name: id, type: long}
     - {name: account, type: long}
     - {name: time, type: timestamp, format: '%Y-%m-%d %H:%M:%S'}
-    - {name: purchase, type: timestamp, format: '%Y%m%d'}
+#    - {name: purchase, type: timestamp, format: '%Y%m%d'}
+    - {name: purchase, type: string }
     - {name: name, type: string}
 filters:
   - type: multi_columns
@@ -28,5 +29,13 @@ filters:
         columns:
           - { name: first, type: string }
           - { name: last,  type: string }
+      - src: purchase
+#        separator: ' '
+#        separator: '\s+'
+        remain: true
+        columns:
+          - { name: purchase1, type: long }
+          - { name: purchase2, type: boolean }
+
 
 out: {type: stdout}
