@@ -34,7 +34,8 @@ filters:
 #        separator: '\s+'
         remain: true
         columns:
-          - { name: purchase1, type: long }
+#          - { name: purchase1, type: long }
+          - { name: purchase1, type: timestamp, format: "%Y%m%d" }
           - { name: purchase2, type: boolean }
 
 

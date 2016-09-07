@@ -13,6 +13,7 @@ import org.embulk.spi.PageOutput;
 import org.embulk.spi.PageReader;
 import org.embulk.spi.Schema;
 import org.embulk.spi.SchemaConfig;
+import org.embulk.spi.time.TimestampParser;
 
 import java.util.ArrayList;
 
@@ -38,7 +39,7 @@ public class MultiColumnsFilterPlugin
     }
 
     public interface PluginTask
-            extends Task
+            extends Task, TimestampParser.Task
     {
         // configuration option 1 (required integer)
         @Config("rules")

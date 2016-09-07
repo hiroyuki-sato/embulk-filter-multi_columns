@@ -43,7 +43,7 @@ public class MultiColumnsConfiguration
     {
         int offset = 0;
         for (ColumnConfig columnConfig : schemaConfig.getColumns()) {
-            ruleMap.put(columnConfig.getName(), new MultiColumnsInputSource(columnConfig.getName(), src, offset++));
+            ruleMap.put(columnConfig.getName(), new MultiColumnsInputSource(task, columnConfig, src, offset++));
             multiColumns.add(columnConfig);
         }
     }
@@ -56,6 +56,16 @@ public class MultiColumnsConfiguration
     public MultiColumnsFilterPlugin.MultiColumnsRulesTask getInputRule(String name)
     {
         return inputRules.get(name);
+    }
+
+    public ArrayList<ColumnConfig> getMultiColumns()
+    {
+        return multiColumns;
+    }
+
+    public Integer getColumnsSize()
+    {
+        return inputSchema.getColumnCount() + multiColumns.size();
     }
 
     public Schema buildOutputSchema()
