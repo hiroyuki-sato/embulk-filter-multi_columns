@@ -6,7 +6,7 @@ import org.embulk.spi.Exec;
 import org.embulk.spi.PageBuilder;
 import org.embulk.spi.PageReader;
 import org.embulk.spi.Schema;
-import org.msgpack.value.Value;
+import org.embulk.spi.time.Timestamp;
 import org.msgpack.value.ValueFactory;
 import org.slf4j.Logger;
 
@@ -19,7 +19,7 @@ public class MultiColumnsVisitorImpl
 {
     private MultiColumnsFilterPlugin.PluginTask task;
     private Schema inputSchema;
-//    private Schema outputSchema;
+    //    private Schema outputSchema;
     private PageReader pageReader;
     private PageBuilder pageBuilder;
     private MultiColumnsConfiguration multiColumnsConfig;
@@ -57,8 +57,9 @@ public class MultiColumnsVisitorImpl
         }
     }
 
-    private String getSplitedString(MultiColumnsInputSource inputSource){
-        String[] row = separateMap.get(inputSource.getSrc());
+    private String getSplitedString(MultiColumnsInputSource inputSource)
+    {
+        String[] row = separateMap.get(inputSource.getInputColumnName());
         Integer offset = inputSource.getOffset();
         if (row.length < offset + 1) {
             return null;
@@ -74,14 +75,15 @@ public class MultiColumnsVisitorImpl
         MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
         if (inputSource != null) {
             String str = getSplitedString(inputSource);
-            if ( str == null) {
+            if (str == null) {
                 pageBuilder.setNull(outputColumn);
             }
             else {
                 Boolean v = ColumnCaster.asBoolean(ValueFactory.newString(str));
                 pageBuilder.setBoolean(outputColumn, v);
             }
-        } else {
+        }
+        else {
             Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
             if (pageReader.isNull(inputColumn)) {
                 pageBuilder.setNull(outputColumn);
@@ -98,14 +100,15 @@ public class MultiColumnsVisitorImpl
         MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
         if (inputSource != null) {
             String str = getSplitedString(inputSource);
-            if ( str == null) {
+            if (str == null) {
                 pageBuilder.setNull(outputColumn);
             }
             else {
                 Long v = ColumnCaster.asLong(ValueFactory.newString(str));
                 pageBuilder.setLong(outputColumn, v);
             }
-        } else {
+        }
+        else {
             Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
             if (pageReader.isNull(inputColumn)) {
                 pageBuilder.setNull(outputColumn);
@@ -122,14 +125,15 @@ public class MultiColumnsVisitorImpl
         MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
         if (inputSource != null) {
             String str = getSplitedString(inputSource);
-            if ( str == null) {
+            if (str == null) {
                 pageBuilder.setNull(outputColumn);
             }
             else {
                 Double v = ColumnCaster.asDouble(ValueFactory.newString(str));
                 pageBuilder.setDouble(outputColumn, v);
             }
-        } else {
+        }
+        else {
             Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
             if (pageReader.isNull(inputColumn)) {
                 pageBuilder.setNull(outputColumn);
@@ -146,7 +150,7 @@ public class MultiColumnsVisitorImpl
         MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
         if (inputSource != null) {
             String str = getSplitedString(inputSource);
-            if ( str == null) {
+            if (str == null) {
                 pageBuilder.setNull(outputColumn);
             }
             else {
@@ -179,15 +183,6 @@ public class MultiColumnsVisitorImpl
     @Override
     public void timestampColumn(Column outputColumn)
     {
-        Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
-        if (pageReader.isNull(inputColumn)) {
-            pageBuilder.setNull(outputColumn);
-        }
-        else {
-            pageBuilder.setTimestamp(outputColumn, pageReader.getTimestamp(inputColumn));
-        }
-
-/*
         MultiColumnsInputSource inputSource = multiColumnsConfig.getMultiColumnsInputSource(outputColumn.getName());
         if (inputSource != null) {
             String v = getSplitedString(inputSource);
@@ -195,9 +190,11 @@ public class MultiColumnsVisitorImpl
                 pageBuilder.setNull(outputColumn);
             }
             else {
-                pageBuilder.setString(outputColumn, v);
+                Timestamp timestamp = ColumnCaster.asTimestamp(ValueFactory.newString(v), inputSource.getTimestampParser());
+                pageBuilder.setTimestamp(outputColumn, timestamp);
             }
-        } else {
+        }
+        else {
             Column inputColumn = inputSchema.lookupColumn(outputColumn.getName());
             if (pageReader.isNull(inputColumn)) {
                 pageBuilder.setNull(outputColumn);
@@ -206,7 +203,5 @@ public class MultiColumnsVisitorImpl
                 pageBuilder.setTimestamp(outputColumn, pageReader.getTimestamp(inputColumn));
             }
         }
-*/
     }
-
 }
