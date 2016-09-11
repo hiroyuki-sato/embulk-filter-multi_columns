@@ -1,6 +1,6 @@
 in:
   type: file
-  path_prefix: example/csv/sample_
+  path_prefix: example/csv/sample.csv
   parser:
     charset: UTF-8
     newline: CRLF
@@ -14,29 +14,21 @@ in:
     allow_optional_columns: false
     columns:
     - {name: id, type: long}
-    - {name: account, type: long}
-    - {name: time, type: timestamp, format: '%Y-%m-%d %H:%M:%S'}
-#    - {name: purchase, type: timestamp, format: '%Y%m%d'}
-    - {name: purchase, type: string }
-    - {name: name, type: string}
+    - {name: full_name, type: string}
+    - {name: registered_at, type: string }
 filters:
   - type: multi_columns
+    default_timezone: "Asia/Tokyo"
     rules:
-      - src: name
-#        separator: ' '
-#        separator: '\s+'
-#        remain: true
+      - src: full_name
+        separater: '\s+'
         columns:
-          - { name: first, type: string }
-          - { name: last,  type: string }
-      - src: purchase
-#        separator: ' '
-#        separator: '\s+'
+          - { name: first_name, type: string }
+          - { name: last_name,  type: string }
+      - src: registered_at
+        columns:
+          - { name: register_date, type: timestamp, format: "%Y-%m-%d" }
+          - { name: register_time, type: string }
         remain: true
-        columns:
-#          - { name: purchase1, type: long }
-          - { name: purchase1, type: timestamp, format: "%Y%m%d" }
-          - { name: purchase2, type: boolean }
-
-
+     
 out: {type: stdout}
