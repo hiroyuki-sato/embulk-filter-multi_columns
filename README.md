@@ -34,7 +34,7 @@ id,full_name,registered_at
 ```yaml
 in:
   type: file
-  path_prefix: example/csv/sample_04.csv
+  path_prefix: example/csv/sample.csv
   parser:
   # parser config.
     columns:
